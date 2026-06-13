@@ -9,6 +9,7 @@ public class MenuUtama extends javax.swing.JFrame {
     public MenuUtama() {
         initComponents();
         setTitle("RENTAL KENDARAAN");
+        TabelKendaraan.createDefaultColumnsFromModel();
     }
     public void refreshTabelKendaraan(){
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) TabelKendaraan.getModel();
