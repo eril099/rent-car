@@ -1,15 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package rentcar;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-/**
- *
- * @author Eril
- */
 public class Pembayaran {
     private Double denda;
     private Double diskon;

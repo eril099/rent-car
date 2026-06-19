@@ -1,15 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
 package rentcar;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-/**
- *
- * @author Eril
- */
 public class DialogSewaMobil extends javax.swing.JDialog {
     private FleetManager manager;
     private ArrayList<Kendaraan> kendaraanTersedia = new java.util.ArrayList<>();
@@ -29,9 +21,6 @@ public class DialogSewaMobil extends javax.swing.JDialog {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DialogSewaMobil.class.getName());
 
-    /**
-     * Creates new form DialogSewaMobil
-     */
     public DialogSewaMobil(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -182,7 +171,6 @@ public class DialogSewaMobil extends javax.swing.JDialog {
 
             mobilDipilih.setStatusKendaraan("Disewa");
 
-            pelanggan.tambahRiwayat(pesanan);
             manager.tambahPemesanan(pesanan);
 
             this.dispose();

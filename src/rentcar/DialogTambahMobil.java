@@ -107,13 +107,36 @@ public class DialogTambahMobil extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String inputMerk = jTextField1.getText();
         String inputTipe = jTextField2.getText();
-        double inputTarif = Double.parseDouble(jTextField3.getText());
+        String inputTarifStr = jTextField3.getText().trim();
+        
+        if (inputMerk.isEmpty() || inputTipe.isEmpty() || inputTarifStr.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this,
+            "Semua field harus diisi!", "Peringatan",
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+        return;
+        }
+        
+        try {
+        double inputTarif = Double.parseDouble(inputTarifStr);
+
+        if (inputTarif <= 0) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Tarif tidak boleh negatif!", "Peringatan",
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         
         Kendaraan mobilBaru = new Kendaraan(inputMerk, inputTipe, inputTarif);
         managerDialog.tambahKendaraan(mobilBaru);
         this.dispose();
+       
     }//GEN-LAST:event_jButton1ActionPerformed
-
+        catch (NumberFormatException e) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Tarif harus berupa angka!", "Format Salah",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+}
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         dispose();
     }//GEN-LAST:event_jButton2ActionPerformed

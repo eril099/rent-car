@@ -36,6 +36,8 @@ public class DialogKembalikanMobil extends javax.swing.JDialog {
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jTextField2 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -49,6 +51,8 @@ public class DialogKembalikanMobil extends javax.swing.JDialog {
         jButton2.setText("Cancel");
         jButton2.addActionListener(this::jButton2ActionPerformed);
 
+        jLabel3.setText("Diskon                            Rp:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -57,17 +61,19 @@ public class DialogKembalikanMobil extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBox1, 0, 195, Short.MAX_VALUE)
-                            .addComponent(jTextField1)))
+                            .addComponent(jComboBox1, 0, 191, Short.MAX_VALUE)
+                            .addComponent(jTextField1)
+                            .addComponent(jTextField2)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton1)
-                        .addGap(25, 25, 25)
+                        .addGap(18, 18, 18)
                         .addComponent(jButton2)))
                 .addContainerGap())
         );
@@ -82,11 +88,15 @@ public class DialogKembalikanMobil extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(36, 36, 36)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addContainerGap(15, Short.MAX_VALUE))
+                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2)
+                    .addComponent(jButton1))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         pack();
@@ -98,6 +108,29 @@ public class DialogKembalikanMobil extends javax.swing.JDialog {
             javax.swing.JOptionPane.showMessageDialog(this, "Pilih Kendaraan yang ingin dikembalikan", "Peringatan", javax.swing.JOptionPane.WARNING_MESSAGE);
             return;
         }
+        
+        String tglStr = jTextField1.getText().trim();
+        if (tglStr.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Tanggal kembali harus diisi!", "Peringatan",
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        String diskonStr = jTextField2.getText().trim();
+        double diskon = 0.0;
+        
+   try {
+        if (!diskonStr.isEmpty()) {
+                diskon = Double.parseDouble(diskonStr);
+                if (diskon < 0) {
+                    javax.swing.JOptionPane.showMessageDialog(this,
+                        "Diskon tidak boleh negatif!", "Peringatan",
+                        javax.swing.JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+            }
+       
         Pemesanan pesanan = manager.getPemesananAktif().get(index);
         LocalDate tglAktual = LocalDate.parse(jTextField1.getText());
         
@@ -106,8 +139,8 @@ public class DialogKembalikanMobil extends javax.swing.JDialog {
         double tarif = pesanan.getMobilDisewa().getTarifPerHari();
         double biayaAwal = durasi * tarif;
 
-        // Hitung denda & total
-        Pembayaran bayar = new Pembayaran(0.0, biayaAwal);
+        // Hitung denda dan total
+        Pembayaran bayar = new Pembayaran(diskon, biayaAwal);
         bayar.hitungDenda(pesanan, tglAktual);
         bayar.hitungBiayaAkhir();
         
@@ -125,6 +158,7 @@ public class DialogKembalikanMobil extends javax.swing.JDialog {
         + "--------------------------------------------------------------\n"
         + "Biaya Sewa\t: Rp" + String.format("%,.0f", biayaAwal) + "\n"
         + "Denda Keterlambatan\t: Rp" + String.format("%,.0f", bayar.getDenda()) + "\n"
+        + "Diskon\t\t: Rp" + String.format("%,.0f", bayar.getDiskon()) + "\n"
         + "--------------------------------------------------------------\n"
         + "TOTAL BAYAR\t: Rp" +String.format("%,.0f", bayar.getBiayaAkhir()) + "\n"
         + "====================================";
@@ -136,6 +170,11 @@ public class DialogKembalikanMobil extends javax.swing.JDialog {
         pesanan.setStatusSelesai(true);
 
         this.dispose();
+        } catch (java.time.format.DateTimeParseException e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Format tanggal salah! Gunakan yyyy-MM-dd (contoh: 2026-06-17)",
+                "Format Salah", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -185,6 +224,8 @@ public class DialogKembalikanMobil extends javax.swing.JDialog {
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
 }
